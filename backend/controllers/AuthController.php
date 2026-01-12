@@ -37,10 +37,10 @@ class AuthController {
     
     public function login($data) {
         $user = new User();
-        
+
         $user->email = $data['email'] ?? '';
         $password = $data['password'] ?? '';
-        
+
         if($user->emailExists()) {
             if(password_verify($password, $user->password)) {
                 $token = AuthMiddleware::generateToken($user->id, $user->email);
@@ -56,9 +56,13 @@ class AuthController {
                 ));
             }
         }
-        
+
         http_response_code(401);
         return json_encode(array("message" => "Invalid email or password."));
+    }
+
+    public function logout() {
+        return json_encode(array("message" => "Logged out successfully."));
     }
 }
 ?>

@@ -51,6 +51,11 @@ switch ($method) {
                 echo $auth->login($data);
                 break;
 
+            case 'logout':
+                $auth = new AuthController();
+                echo $auth->logout();
+                break;
+
             case 'cart':
                 AuthMiddleware::authenticate();
                 $cart = new CartController();
@@ -206,6 +211,10 @@ switch ($method) {
             // Single item update
             echo $cart->updateCartItem($user_id, $uri_parts[1], $data);
         }
+        break;
+
+    case 'OPTIONS':
+        http_response_code(200);
         break;
 
     default:

@@ -69,6 +69,7 @@
 <script setup>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
+import axios from "axios";
 
 const router = useRouter();
 
@@ -83,12 +84,12 @@ const loading = ref(false);
 const register = async () => {
   loading.value = true;
   try {
-    // TODO: Implement register API call
-    console.log("Register attempt:", form.value);
-    // For now, just redirect
+    await axios.post("/api/register", form.value);
+    alert("Registration successful! Please login.");
     router.push("/login");
   } catch (error) {
     console.error("Register error:", error);
+    alert(error.response?.data?.message || "Registration failed");
   } finally {
     loading.value = false;
   }

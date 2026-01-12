@@ -2,6 +2,7 @@ import { createApp } from "vue";
 import { createPinia } from "pinia";
 import App from "./App.vue";
 import router from "./router";
+import axios from "axios";
 
 // Import Bootstrap
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -15,6 +16,23 @@ import "vue3-toastify/dist/index.css";
 
 // Import custom CSS
 import "./assets/main.css";
+
+// Configure axios
+axios.defaults.baseURL = "http://localhost:8000";
+
+// Add request interceptor to include auth token
+axios.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  },
+);
 
 const app = createApp(App);
 

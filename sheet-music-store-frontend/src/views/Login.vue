@@ -50,6 +50,7 @@
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
+import axios from "axios";
 
 const router = useRouter();
 const authStore = useAuthStore();
@@ -63,12 +64,13 @@ const loading = ref(false);
 const login = async () => {
   loading.value = true;
   try {
-    // TODO: Implement login API call
-    console.log("Login attempt:", form.value);
-    // For now, just redirect
+    const response = await axios.post("/api/login", form.value);
+    authStore.setToken(response.data.token);
+    authStore.setUser(response.data.user);
     router.push("/");
   } catch (error) {
     console.error("Login error:", error);
+    alert(error.response?.data?.message || "Login failed");
   } finally {
     loading.value = false;
   }
