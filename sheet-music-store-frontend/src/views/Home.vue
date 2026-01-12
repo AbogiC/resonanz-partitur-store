@@ -8,7 +8,7 @@
             <div class="hero-content">
               <h1 class="display-3 fw-bold mb-4">
                 Your Music,<br />
-                <span class="text-warning">Your Store</span>
+                <span>Your Store</span>
               </h1>
               <p class="lead mb-5 opacity-75">
                 Discover premium sheet music, instruments, and musical
@@ -18,7 +18,7 @@
               <div class="d-flex flex-column flex-sm-row gap-3">
                 <router-link
                   to="/products?type=sheet_music"
-                  class="btn btn-warning btn-lg d-flex align-items-center justify-content-center gap-2"
+                  class="btn bg-white btn-lg d-flex align-items-center justify-content-center gap-2"
                 >
                   <i class="bi bi-music-note"></i>
                   Browse Sheet Music

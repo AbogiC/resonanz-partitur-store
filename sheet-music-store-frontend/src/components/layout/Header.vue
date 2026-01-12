@@ -5,10 +5,14 @@
     <div class="container">
       <!-- Logo -->
       <router-link to="/" class="navbar-brand d-flex align-items-center">
-        <div class="logo-icon me-2">
-          <span class="text-white fs-4">♪</span>
+        <div>
+          <img
+            src="/logo_resonanz.png"
+            alt="The Resonanz Logo"
+            class="img-fluid"
+            style="max-height: 50px"
+          />
         </div>
-        <span class="brand-text fs-3">HarmonyStore</span>
       </router-link>
 
       <!-- Mobile Toggle -->

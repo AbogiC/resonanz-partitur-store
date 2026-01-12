@@ -11,7 +11,7 @@
             <div class="logo-icon me-2">
               <i class="bi bi-music-note text-white fs-4"></i>
             </div>
-            <span class="brand-text fs-3 text-white">HarmonyStore</span>
+            <span class="brand-text fs-3 text-white">The Resonanz</span>
           </router-link>
           <p class="text-muted">
             Your premier destination for sheet music and musical merchandise.
@@ -199,7 +199,7 @@
       <div class="row">
         <div class="col-md-6">
           <p class="mb-0 text-muted small">
-            &copy; {{ new Date().getFullYear() }} HarmonyStore. All rights
+            &copy; {{ new Date().getFullYear() }} The Resonanz. All rights
             reserved.
           </p>
         </div>
