@@ -87,15 +87,61 @@ class Product {
         }
     }
 
+    public function create() {
+        $query = "INSERT INTO " . $this->table_name . " SET
+                  name=:name, description=:description, price=:price, type=:type, category=:category,
+                  stock_quantity=:stock_quantity, digital_file_path=:digital_file_path, image_url=:image_url,
+                  composer=:composer, instrument=:instrument, difficulty_level=:difficulty_level,
+                  duration_minutes=:duration_minutes, is_digital=:is_digital";
+
+        $stmt = $this->conn->prepare($query);
+
+        // sanitize
+        $this->name = htmlspecialchars(strip_tags($this->name));
+        $this->description = htmlspecialchars(strip_tags($this->description));
+        $this->price = htmlspecialchars(strip_tags($this->price));
+        $this->type = htmlspecialchars(strip_tags($this->type));
+        $this->category = htmlspecialchars(strip_tags($this->category));
+        $this->stock_quantity = htmlspecialchars(strip_tags($this->stock_quantity));
+        $this->digital_file_path = htmlspecialchars(strip_tags($this->digital_file_path));
+        $this->image_url = htmlspecialchars(strip_tags($this->image_url));
+        $this->composer = htmlspecialchars(strip_tags($this->composer));
+        $this->instrument = htmlspecialchars(strip_tags($this->instrument));
+        $this->difficulty_level = htmlspecialchars(strip_tags($this->difficulty_level));
+        $this->duration_minutes = htmlspecialchars(strip_tags($this->duration_minutes));
+        $this->is_digital = htmlspecialchars(strip_tags($this->is_digital));
+
+        // bind values
+        $stmt->bindParam(":name", $this->name);
+        $stmt->bindParam(":description", $this->description);
+        $stmt->bindParam(":price", $this->price);
+        $stmt->bindParam(":type", $this->type);
+        $stmt->bindParam(":category", $this->category);
+        $stmt->bindParam(":stock_quantity", $this->stock_quantity);
+        $stmt->bindParam(":digital_file_path", $this->digital_file_path);
+        $stmt->bindParam(":image_url", $this->image_url);
+        $stmt->bindParam(":composer", $this->composer);
+        $stmt->bindParam(":instrument", $this->instrument);
+        $stmt->bindParam(":difficulty_level", $this->difficulty_level);
+        $stmt->bindParam(":duration_minutes", $this->duration_minutes);
+        $stmt->bindParam(":is_digital", $this->is_digital);
+
+        if($stmt->execute()) {
+            return true;
+        }
+
+        return false;
+    }
+
     public function updateStock($quantity) {
-        $query = "UPDATE " . $this->table_name . " 
-                  SET stock_quantity = stock_quantity - :quantity 
+        $query = "UPDATE " . $this->table_name . "
+                  SET stock_quantity = stock_quantity - :quantity
                   WHERE id = :id AND stock_quantity >= :quantity";
-        
+
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(":quantity", $quantity);
         $stmt->bindParam(":id", $this->id);
-        
+
         return $stmt->execute();
     }
 }

@@ -405,6 +405,7 @@ import { useRoute, useRouter } from "vue-router";
 import { useProductStore } from "@/stores/product";
 import ProductCard from "@/components/product/ProductCard.vue";
 import ProductListItem from "@/components/product/ProductListItem.vue";
+import { Icon } from "@iconify/vue";
 
 const route = useRoute();
 const router = useRouter();

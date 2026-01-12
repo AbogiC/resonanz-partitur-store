@@ -92,6 +92,7 @@
 <script setup>
 import { computed } from "vue";
 import { useCartStore } from "@/stores/cart";
+import { Icon } from "@iconify/vue";
 
 const props = defineProps({
   product: {

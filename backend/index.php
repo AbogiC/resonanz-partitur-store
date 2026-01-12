@@ -79,6 +79,11 @@ switch ($method) {
                 echo $payment->handlePaymentWebhook($data);
                 break;
 
+            case 'products':
+                $product = new ProductController();
+                echo $product->addProduct();
+                break;
+
             default:
                 http_response_code(404);
                 echo json_encode(array("message" => "Endpoint not found."));
