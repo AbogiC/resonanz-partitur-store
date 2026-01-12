@@ -1,6 +1,3 @@
-
-**controllers/OrderController.php**
-```php
 <?php
 require_once 'models/Order.php';
 require_once 'models/OrderItem.php';

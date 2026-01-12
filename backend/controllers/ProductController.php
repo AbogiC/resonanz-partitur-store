@@ -20,19 +20,19 @@ class ProductController {
             extract($row);
             
             $product_item = array(
-                "id" => $id,
+                "id" => (int) $id,
                 "name" => $name,
                 "description" => $description,
-                "price" => $price,
+                "price" => (float) $price,
                 "type" => $type,
                 "category" => $category,
-                "stock_quantity" => $stock_quantity,
+                "stock_quantity" => (int) $stock_quantity,
                 "image_url" => $image_url,
                 "composer" => $composer,
                 "instrument" => $instrument,
                 "difficulty_level" => $difficulty_level,
-                "duration_minutes" => $duration_minutes,
-                "is_digital" => $is_digital
+                "duration_minutes" => (int) $duration_minutes,
+                "is_digital" => (bool) $is_digital
             );
             
             array_push($products_arr["records"], $product_item);
@@ -48,20 +48,20 @@ class ProductController {
 
         if($product->name) {
             $product_arr = array(
-                "id" => $product->id,
+                "id" => (int) $product->id,
                 "name" => $product->name,
                 "description" => $product->description,
-                "price" => $product->price,
+                "price" => (float) $product->price,
                 "type" => $product->type,
                 "category" => $product->category,
-                "stock_quantity" => $product->stock_quantity,
+                "stock_quantity" => (int) $product->stock_quantity,
                 "digital_file_path" => $product->digital_file_path,
                 "image_url" => $product->image_url,
                 "composer" => $product->composer,
                 "instrument" => $product->instrument,
                 "difficulty_level" => $product->difficulty_level,
-                "duration_minutes" => $product->duration_minutes,
-                "is_digital" => $product->is_digital
+                "duration_minutes" => (int) $product->duration_minutes,
+                "is_digital" => (bool) $product->is_digital
             );
 
             return json_encode($product_arr);
@@ -83,17 +83,17 @@ class ProductController {
             $product = new Product();
             $product->name = $data->name;
             $product->description = $data->description ?? '';
-            $product->price = $data->price;
+            $product->price = (float) $data->price;
             $product->type = $data->type;
             $product->category = $data->category;
-            $product->stock_quantity = $data->stock_quantity ?? 0;
+            $product->stock_quantity = (int) ($data->stock_quantity ?? 0);
             $product->digital_file_path = $data->digital_file_path ?? '';
             $product->image_url = $data->image_url ?? '';
             $product->composer = $data->composer ?? '';
             $product->instrument = $data->instrument ?? '';
             $product->difficulty_level = $data->difficulty_level ?? '';
-            $product->duration_minutes = $data->duration_minutes ?? 0;
-            $product->is_digital = $data->is_digital ?? 0;
+            $product->duration_minutes = (int) ($data->duration_minutes ?? 0);
+            $product->is_digital = (bool) ($data->is_digital ?? 0);
 
             if($product->create()) {
                 http_response_code(201);

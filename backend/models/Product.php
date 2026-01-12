@@ -71,19 +71,20 @@ class Product {
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         
         if($row) {
+            $this->id = (int) $row['id'];
             $this->name = $row['name'];
             $this->description = $row['description'];
-            $this->price = $row['price'];
+            $this->price = (float) $row['price'];
             $this->type = $row['type'];
             $this->category = $row['category'];
-            $this->stock_quantity = $row['stock_quantity'];
+            $this->stock_quantity = (int) $row['stock_quantity'];
             $this->digital_file_path = $row['digital_file_path'];
             $this->image_url = $row['image_url'];
             $this->composer = $row['composer'];
             $this->instrument = $row['instrument'];
             $this->difficulty_level = $row['difficulty_level'];
-            $this->duration_minutes = $row['duration_minutes'];
-            $this->is_digital = $row['is_digital'];
+            $this->duration_minutes = (int) $row['duration_minutes'];
+            $this->is_digital = (bool) $row['is_digital'];
         }
     }
 
@@ -99,17 +100,13 @@ class Product {
         // sanitize
         $this->name = htmlspecialchars(strip_tags($this->name));
         $this->description = htmlspecialchars(strip_tags($this->description));
-        $this->price = htmlspecialchars(strip_tags($this->price));
         $this->type = htmlspecialchars(strip_tags($this->type));
         $this->category = htmlspecialchars(strip_tags($this->category));
-        $this->stock_quantity = htmlspecialchars(strip_tags($this->stock_quantity));
         $this->digital_file_path = htmlspecialchars(strip_tags($this->digital_file_path));
         $this->image_url = htmlspecialchars(strip_tags($this->image_url));
         $this->composer = htmlspecialchars(strip_tags($this->composer));
         $this->instrument = htmlspecialchars(strip_tags($this->instrument));
         $this->difficulty_level = htmlspecialchars(strip_tags($this->difficulty_level));
-        $this->duration_minutes = htmlspecialchars(strip_tags($this->duration_minutes));
-        $this->is_digital = htmlspecialchars(strip_tags($this->is_digital));
 
         // bind values
         $stmt->bindParam(":name", $this->name);
