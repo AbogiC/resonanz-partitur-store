@@ -105,7 +105,7 @@ const cartStore = useCartStore();
 
 // Computed properties
 const isInCart = computed(() => {
-  return cartStore.items.some((item) => item.product_id === props.product.id);
+  return cartStore.cartItems.some((item) => item.id === props.product.id);
 });
 
 const canAddToCart = computed(() => {
@@ -134,7 +134,7 @@ const addToCart = async () => {
   if (!canAddToCart.value) return;
 
   try {
-    await cartStore.addItem(props.product);
+    cartStore.addToCart(props.product);
   } catch (error) {
     console.error("Failed to add to cart:", error);
   }
