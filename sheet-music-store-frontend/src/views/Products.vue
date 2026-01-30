@@ -527,8 +527,6 @@ const productCounts = computed(() => productStore.productCountsByType);
 const categories = computed(() => productStore.categories);
 const categoryCounts = computed(() => productStore.categoryCounts);
 
-console.log("total all products: " + allProducts.value.length);
-
 // Filtered products
 const filteredProducts = computed(() => {
   let products = [...allProducts.value];

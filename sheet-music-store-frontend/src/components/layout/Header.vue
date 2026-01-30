@@ -272,7 +272,7 @@ const authStore = useAuthStore();
 const showSearch = ref(false);
 const searchQuery = ref("");
 
-const cartItemCount = computed(() => cartStore.cartItemCount);
+const cartItemCount = computed(() => cartStore.totalQuantity);
 const isAuthenticated = computed(() => authStore.isAuthenticated);
 const user = computed(() => authStore.user);
 

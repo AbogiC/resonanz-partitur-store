@@ -78,6 +78,15 @@ class CartController {
         
         return json_encode($cart_arr);
     }
+
+    public function getCartItemCount($user_id) {
+        $cart = new Cart();
+        $cart->user_id = $user_id;
+
+        $count = $cart->getCartItemCount();
+
+        return json_encode(array("count" => $count));
+    }
     
     public function updateCartItem($user_id, $cart_id, $data) {
         $cart = new Cart();

@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { ref, computed } from "vue";
+import { ref, onMounted, computed } from "vue";
 import axios from "axios";
 import { useAuthStore } from "./auth";
 import router from "@/router";
@@ -8,9 +8,24 @@ export const useCartStore = defineStore("cart", () => {
   const cartItems = ref(JSON.parse(localStorage.getItem("cart") || "[]"));
   const isCartOpen = ref(false);
   const authStore = useAuthStore();
+  const cartItemCount = ref(0);
+  const totalQuantity = ref(0);
 
-  const cartItemCount = computed(() => {
-    return cartItems.value.reduce((total, item) => total + item.quantity, 0);
+  onMounted(async () => {
+    try {
+      const response = await axios.get("http://localhost:8000/api/cart/count", {
+        headers: {
+          Authorization: `Bearer ${authStore.token}`,
+        },
+      });
+      const count = response.data.count;
+      cartItemCount.value = count.item_count;
+      totalQuantity.value = parseInt(count.total_quantity);
+    } catch (error) {
+      console.error("Error fetching cart count:", error);
+      cartItemCount.value = 0;
+      totalQuantity.value = 0;
+    }
   });
 
   const cartTotal = computed(() => {
@@ -110,6 +125,7 @@ export const useCartStore = defineStore("cart", () => {
     cartItems,
     isCartOpen,
     cartItemCount,
+    totalQuantity,
     cartTotal,
     getCartItems,
     addToCart,

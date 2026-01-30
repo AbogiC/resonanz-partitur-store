@@ -116,7 +116,21 @@ switch ($method) {
                 AuthMiddleware::authenticate();
                 $cart = new CartController();
                 $user_id = $_SESSION['user_id'] ?? 1;
-                echo $cart->getCart($user_id);
+
+                if (isset($uri_parts[1])) {
+                    switch ($uri_parts[1]) {
+                        case 'count':
+                            echo $cart->getCartItemCount($user_id);
+                            break;
+                        default:
+                            // Maybe show cart details for cart/{id}
+                            http_response_code(404);
+                            echo json_encode(["message" => "Cart endpoint not found"]);
+                    }
+                } else {
+                    // GET /api/cart - get all cart items
+                    echo $cart->getCart($user_id);
+                }
                 break;
 
             case 'orders':

@@ -49,7 +49,7 @@ class Cart {
     }
 
     public function getCartItems() {
-        $query = "SELECT c.*, p.name, p.price, p.type, p.image_url, 
+        $query = "SELECT c.*, p.name, p.price, p.type, p.image_url, p.category, p.composer, p.instrument,
                          p.is_digital, p.stock_quantity,
                          (c.quantity * p.price) as item_total
                   FROM " . $this->table_name . " c
