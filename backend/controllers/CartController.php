@@ -192,26 +192,39 @@ class CartController
 
             // Set properties
             $cart->id = $cart_id;
+            $cart->user_id = $_SESSION['user_id'] ?? 1;
             $cart->quantity = $currentQuantity - 1;
 
-            // Update quantity
-            if ($cart->decreaseQuantity($cart_id)) {
-                return json_encode(array(
-                    "message" => "Cart updated successfully.",
-                    "success" => true,
-                    "cart_item" => array(
-                        "cart_id" => (int) $cart_id,
-                        "quantity" => (int) $cart->quantity,
-                        "product_id" => $productInfo['product_id'] ?? null,
-                        "price" => $productInfo['price'] ?? null
-                    )
-                ), JSON_NUMERIC_CHECK);
+            // Delete item if quantity goes below 1
+            if ($cart->quantity < 1) {
+                if ($cart->removeItem()) {
+                    return json_encode(array(
+                        "message" => "Item removed from cart.",
+                        "success" => true,
+                        "removed" => true,
+                        "cart_id" => (int) $cart_id
+                    ));
+                }
             } else {
-                http_response_code(500);
-                return json_encode(array(
-                    "message" => "Unable to update cart. Database error occurred.",
-                    "success" => false
-                ));
+                // Update quantity
+                if ($cart->decreaseQuantity($cart_id)) {
+                    return json_encode(array(
+                        "message" => "Cart updated successfully.",
+                        "success" => true,
+                        "cart_item" => array(
+                            "cart_id" => (int) $cart_id,
+                            "quantity" => (int) $cart->quantity,
+                            "product_id" => $productInfo['product_id'] ?? null,
+                            "price" => $productInfo['price'] ?? null
+                        )
+                    ), JSON_NUMERIC_CHECK);
+                } else {
+                    http_response_code(500);
+                    return json_encode(array(
+                        "message" => "Unable to update cart. Database error occurred.",
+                        "success" => false
+                    ));
+                }
             }
 
         } catch (Exception $e) {

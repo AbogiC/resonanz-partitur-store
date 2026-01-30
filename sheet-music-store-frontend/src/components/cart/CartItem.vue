@@ -23,7 +23,7 @@
             <h6 class="mb-1 text-dark fw-semibold">{{ item.name }}</h6>
           </router-link>
           <button
-            @click="$emit('remove', item.id)"
+            @click="removeItem"
             class="btn btn-link btn-sm text-muted p-0"
           >
             <i class="bi bi-x-lg"></i>
@@ -107,6 +107,10 @@ const props = defineProps({
     required: true,
   },
 });
+
+const removeItem = () => {
+  cartStore.removeFromCart(props.item.cart_id);
+};
 
 const decreaseQuantity = () => {
   cartStore.updateQuantity(props.item.cart_id, false);

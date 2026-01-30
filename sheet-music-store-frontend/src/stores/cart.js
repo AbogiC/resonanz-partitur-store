@@ -88,9 +88,9 @@ export const useCartStore = defineStore("cart", () => {
     }
   };
 
-  const removeFromCart = async (productId) => {
+  const removeFromCart = async (cartId) => {
     try {
-      await axios.delete(`http://localhost:8000/api/cart/${productId}`, {
+      await axios.delete(`http://localhost:8000/api/cart/${cartId}`, {
         headers: {
           Authorization: `Bearer ${authStore.token}`,
         },

@@ -149,14 +149,34 @@ class Cart
 
     public function removeItem()
     {
-        $query = "DELETE FROM " . $this->table_name . " 
+        try {
+            // Validate required properties
+            if (empty($this->id) || empty($this->user_id)) {
+                return false;
+            }
+
+            $query = "DELETE FROM " . $this->table_name . " 
                  WHERE id = :id AND user_id = :user_id";
 
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(":id", $this->id);
-        $stmt->bindParam(":user_id", $this->user_id);
+            $stmt = $this->conn->prepare($query);
 
-        return $stmt->execute();
+            // Use bindValue with explicit parameter types for better safety
+            $stmt->bindValue(":id", $this->id, PDO::PARAM_INT);
+            $stmt->bindValue(":user_id", $this->user_id, PDO::PARAM_INT);
+
+            // Execute and check affected rows
+            if ($stmt->execute()) {
+                // Return true only if a row was actually deleted
+                return $stmt->rowCount() > 0;
+            }
+
+            return false;
+
+        } catch (PDOException $e) {
+            // Log error in production
+            error_log("Database error in removeItem: " . $e->getMessage());
+            return false;
+        }
     }
 
     public function clearCart()

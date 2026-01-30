@@ -151,13 +151,13 @@
         <!-- Right Navigation -->
         <div class="d-flex align-items-center gap-3">
           <!-- Search -->
-          <button
+          <!-- <button
             class="btn btn-link text-dark p-0"
             @click="toggleSearch"
             type="button"
           >
             <span class="fs-4">🔍</span>
-          </button>
+          </button> -->
 
           <!-- Cart -->
           <div class="position-relative">
