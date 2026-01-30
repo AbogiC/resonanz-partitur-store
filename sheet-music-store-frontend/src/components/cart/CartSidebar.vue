@@ -18,8 +18,11 @@
       </button>
     </div>
 
-    <div class="cart-body flex-grow-1 overflow-auto">
-      <div v-if="cartItems.length === 0" class="text-center py-5">
+    <div
+      class="cart-body flex-grow-1 overflow-auto"
+      style="height: calc(100% - 250px)"
+    >
+      <div v-if="cartItemCount === 0" class="text-center py-5">
         <i class="bi bi-cart fs-1 text-muted mb-3"></i>
         <p class="text-muted">Your cart is empty</p>
         <router-link to="/products" @click="toggleCart" class="btn btn-primary">
@@ -38,10 +41,10 @@
       </div>
     </div>
 
-    <div v-if="cartItems.length > 0" class="cart-footer p-3 border-top">
+    <div v-if="cartItemCount > 0" class="cart-footer p-3 border-top">
       <div class="d-flex justify-content-between align-items-center mb-3">
         <span class="fw-bold">Total:</span>
-        <span class="fw-bold fs-5">${{ cartTotal.toFixed(2) }}</span>
+        <span class="fw-bold fs-5">${{ cartTotal }}</span>
       </div>
       <button class="btn btn-primary w-100 mb-2" @click="checkout">
         Proceed to Checkout
@@ -70,9 +73,14 @@ import CartItem from "./CartItem.vue";
 const router = useRouter();
 const cartStore = useCartStore();
 
+const cartItemDB = computed(() => cartStore.cartItemDB);
+const cartItemCount = computed(() => cartItemDB.value.item_count);
+
+console.log("Cart Sidebar Rendered " + JSON.stringify(cartItemDB.value));
+
 const isCartOpen = computed(() => cartStore.isCartOpen);
-const cartItems = computed(() => cartStore.cartItems);
-const cartTotal = computed(() => cartStore.cartTotal);
+const cartItems = computed(() => cartItemDB.value.items);
+const cartTotal = computed(() => cartItemDB.value.total);
 
 const toggleCart = () => {
   cartStore.toggleCart();

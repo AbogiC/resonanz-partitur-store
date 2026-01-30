@@ -1,17 +1,23 @@
 import { defineStore } from "pinia";
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted } from "vue";
 import axios from "axios";
 import { useAuthStore } from "./auth";
 import router from "@/router";
 
 export const useCartStore = defineStore("cart", () => {
   const cartItems = ref(JSON.parse(localStorage.getItem("cart") || "[]"));
+  const cartItemDB = ref([]);
   const isCartOpen = ref(false);
   const authStore = useAuthStore();
   const cartItemCount = ref(0);
   const totalQuantity = ref(0);
 
   onMounted(async () => {
+    await getCartItemCount();
+    await getCartItems();
+  });
+
+  async function getCartItemCount() {
     try {
       const response = await axios.get("http://localhost:8000/api/cart/count", {
         headers: {
@@ -26,31 +32,23 @@ export const useCartStore = defineStore("cart", () => {
       cartItemCount.value = 0;
       totalQuantity.value = 0;
     }
-  });
-
-  const cartTotal = computed(() => {
-    return cartItems.value.reduce(
-      (total, item) => total + item.price * item.quantity,
-      0,
-    );
-  });
+  }
 
   const getCartItems = async () => {
     if (!authStore.isAuthenticated) {
-      cartItems.value = [];
+      cartItemDB.value = [];
       return;
-    } else {
-      try {
-        const response = await axios.get("http://localhost:8000/api/cart", {
-          headers: {
-            Authorization: `Bearer ${authStore.token}`,
-          },
-        });
-        cartItems.value = response.data;
-      } catch (error) {
-        console.error("Failed to fetch cart items:", error);
-        cartItems.value = [];
-      }
+    }
+    try {
+      const response = await axios.get("http://localhost:8000/api/cart", {
+        headers: {
+          Authorization: `Bearer ${authStore.token}`,
+        },
+      });
+      cartItemDB.value = response.data;
+    } catch (error) {
+      console.error("Failed to fetch cart items:", error);
+      cartItemDB.value = [];
     }
   };
 
@@ -91,9 +89,17 @@ export const useCartStore = defineStore("cart", () => {
     }
   };
 
-  const removeFromCart = (productId) => {
-    cartItems.value = cartItems.value.filter((item) => item.id !== productId);
-    saveCart();
+  const removeFromCart = async (productId) => {
+    try {
+      await axios.delete(`http://localhost:8000/api/cart/${productId}`, {
+        headers: {
+          Authorization: `Bearer ${authStore.token}`,
+        },
+      });
+    } catch (error) {
+      console.error("Failed to remove from cart:", error);
+      throw error;
+    }
   };
 
   const updateQuantity = (productId, quantity) => {
@@ -123,10 +129,10 @@ export const useCartStore = defineStore("cart", () => {
 
   return {
     cartItems,
+    cartItemDB,
     isCartOpen,
     cartItemCount,
     totalQuantity,
-    cartTotal,
     getCartItems,
     addToCart,
     removeFromCart,

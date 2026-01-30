@@ -88,10 +88,8 @@
         </div>
       </div>
       <div class="col-auto text-end">
-        <div class="h5 mb-0 fw-bold">
-          ${{ (item.price * item.quantity).toFixed(2) }}
-        </div>
-        <div class="text-muted small">${{ item.price.toFixed(2) }} each</div>
+        <div class="h5 mb-0 fw-bold">${{ item.item_total }}</div>
+        <div class="text-muted small">${{ item.price }} each</div>
       </div>
     </div>
   </div>
