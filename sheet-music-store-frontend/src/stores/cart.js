@@ -82,7 +82,6 @@ export const useCartStore = defineStore("cart", () => {
       } else {
         cartItems.value.push({ ...product, quantity: 1 });
       }
-      saveCart();
     } catch (error) {
       console.error("Failed to add to cart:", error);
       throw error;
