@@ -96,7 +96,10 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits } from "vue";
+import { defineProps } from "vue";
+import { useCartStore } from "@/stores/cart";
+
+const cartStore = useCartStore();
 
 const props = defineProps({
   item: {
@@ -105,21 +108,12 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(["updateQuantity", "remove"]);
-
 const decreaseQuantity = () => {
-  if (props.item.quantity > 1) {
-    emit("updateQuantity", props.item.id, props.item.quantity - 1);
-  }
+  cartStore.updateQuantity(props.item.cart_id, false);
 };
 
 const increaseQuantity = () => {
-  if (
-    props.item.is_digital ||
-    props.item.quantity < props.item.stock_quantity
-  ) {
-    emit("updateQuantity", props.item.id, props.item.quantity + 1);
-  }
+  cartStore.updateQuantity(props.item.cart_id, true);
 };
 </script>
 

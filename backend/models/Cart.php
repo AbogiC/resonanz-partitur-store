@@ -1,7 +1,8 @@
 <?php
 require_once 'config/database.php';
 
-class Cart {
+class Cart
+{
     private $conn;
     private $table_name = "cart";
 
@@ -10,12 +11,14 @@ class Cart {
     public $product_id;
     public $quantity;
 
-    public function __construct() {
+    public function __construct()
+    {
         $database = new Database();
         $this->conn = $database->getConnection();
     }
 
-    public function addToCart() {
+    public function addToCart()
+    {
         // Check if item already exists in cart
         $check_query = "SELECT id, quantity FROM " . $this->table_name . " 
                        WHERE user_id = :user_id AND product_id = :product_id";
@@ -23,8 +26,8 @@ class Cart {
         $check_stmt->bindParam(":user_id", $this->user_id);
         $check_stmt->bindParam(":product_id", $this->product_id);
         $check_stmt->execute();
-        
-        if($check_stmt->rowCount() > 0) {
+
+        if ($check_stmt->rowCount() > 0) {
             // Update quantity if item exists
             $row = $check_stmt->fetch(PDO::FETCH_ASSOC);
             $query = "UPDATE " . $this->table_name . " 
@@ -44,11 +47,12 @@ class Cart {
             $stmt->bindParam(":product_id", $this->product_id);
             $stmt->bindParam(":quantity", $this->quantity);
         }
-        
+
         return $stmt->execute();
     }
 
-    public function getCartItems() {
+    public function getCartItems()
+    {
         $query = "SELECT c.*, p.name, p.price, p.type, p.image_url, p.category, p.composer, p.instrument,
                          p.is_digital, p.stock_quantity,
                          (c.quantity * p.price) as item_total
@@ -56,104 +60,176 @@ class Cart {
                   JOIN products p ON c.product_id = p.id
                   WHERE c.user_id = :user_id
                   ORDER BY c.added_at DESC";
-        
+
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(":user_id", $this->user_id);
         $stmt->execute();
-        
+
         return $stmt;
     }
 
-    public function updateQuantity() {
+    public function getQuantityByCartId($cartItemId)
+    {
+        try {
+            // Validate input
+            if (empty($cartItemId) || !is_numeric($cartItemId)) {
+                return false; // or return 0 depending on your needs
+            }
+
+            $query = "SELECT quantity FROM " . $this->table_name . " WHERE id = :cartItemId";
+            $stmt = $this->conn->prepare($query);
+            $stmt->bindParam(":cartItemId", $cartItemId, PDO::PARAM_INT);
+            $stmt->execute();
+
+            // Fetch the result
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            // Check if we got a result
+            if ($result && isset($result['quantity'])) {
+                return (int) $result['quantity']; // Return as integer
+            }
+
+            return false; // or return 0 if item doesn't exist
+
+        } catch (PDOException $e) {
+            error_log("Database error in getQuantityByCartId: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    public function getProductInfoByCartId($cartItem)
+    {
+        $query = "SELECT p.id as product_id, p.stock_quantity as stock, p.is_digital
+                  FROM " . $this->table_name . " c
+                  JOIN products p ON c.product_id = p.id
+                  WHERE c.id = :cartItem";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(":cartItem", $cartItem);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function increaseQuantity($cartId)
+    {
+        $query = "UPDATE " . $this->table_name . " 
+                 SET quantity = quantity + 1 
+                 WHERE id = :cart_id";
+
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(":cart_id", $cartId);
+
+        return $stmt->execute();
+    }
+
+    public function decreaseQuantity($cartId)
+    {
+        $query = "UPDATE " . $this->table_name . " 
+                 SET quantity = quantity - 1 
+                 WHERE id = :cart_id";
+
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(":cart_id", $cartId);
+
+        return $stmt->execute();
+    }
+
+    public function updateQuantity()
+    {
         $query = "UPDATE " . $this->table_name . " 
                  SET quantity = :quantity 
                  WHERE id = :id AND user_id = :user_id";
-        
+
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(":quantity", $this->quantity);
         $stmt->bindParam(":id", $this->id);
         $stmt->bindParam(":user_id", $this->user_id);
-        
+
         return $stmt->execute();
     }
 
-    public function removeItem() {
+    public function removeItem()
+    {
         $query = "DELETE FROM " . $this->table_name . " 
                  WHERE id = :id AND user_id = :user_id";
-        
+
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(":id", $this->id);
         $stmt->bindParam(":user_id", $this->user_id);
-        
+
         return $stmt->execute();
     }
 
-    public function clearCart() {
+    public function clearCart()
+    {
         $query = "DELETE FROM " . $this->table_name . " 
                  WHERE user_id = :user_id";
-        
+
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(":user_id", $this->user_id);
-        
+
         return $stmt->execute();
     }
 
-    public function getCartTotal() {
+    public function getCartTotal()
+    {
         $query = "SELECT SUM(c.quantity * p.price) as total
                   FROM " . $this->table_name . " c
                   JOIN products p ON c.product_id = p.id
                   WHERE c.user_id = :user_id";
-        
+
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(":user_id", $this->user_id);
         $stmt->execute();
-        
+
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         return $row['total'] ? $row['total'] : 0;
     }
-    public function getCartItemCount() {
-    $query = "SELECT COUNT(*) as item_count, SUM(quantity) as total_quantity
+    public function getCartItemCount()
+    {
+        $query = "SELECT COUNT(*) as item_count, SUM(quantity) as total_quantity
               FROM " . $this->table_name . " 
               WHERE user_id = :user_id";
-    
-    $stmt = $this->conn->prepare($query);
-    $stmt->bindParam(":user_id", $this->user_id);
-    $stmt->execute();
-    
-    return $stmt->fetch(PDO::FETCH_ASSOC);
-}
 
-public function itemExists($product_id) {
-    $query = "SELECT id, quantity FROM " . $this->table_name . " 
-              WHERE user_id = :user_id AND product_id = :product_id";
-    
-    $stmt = $this->conn->prepare($query);
-    $stmt->bindParam(":user_id", $this->user_id);
-    $stmt->bindParam(":product_id", $product_id);
-    $stmt->execute();
-    
-    if($stmt->rowCount() > 0) {
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(":user_id", $this->user_id);
+        $stmt->execute();
+
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
-    return false;
-}
 
-public function getCartItem($cart_id) {
-    $query = "SELECT c.*, p.name, p.price, p.type, p.image_url, 
+    public function itemExists($product_id)
+    {
+        $query = "SELECT id, quantity FROM " . $this->table_name . " 
+              WHERE user_id = :user_id AND product_id = :product_id";
+
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(":user_id", $this->user_id);
+        $stmt->bindParam(":product_id", $product_id);
+        $stmt->execute();
+
+        if ($stmt->rowCount() > 0) {
+            return $stmt->fetch(PDO::FETCH_ASSOC);
+        }
+        return false;
+    }
+
+    public function getCartItem($cart_id)
+    {
+        $query = "SELECT c.*, p.name, p.price, p.type, p.image_url, 
                      p.is_digital, p.stock_quantity
               FROM " . $this->table_name . " c
               JOIN products p ON c.product_id = p.id
               WHERE c.id = :cart_id AND c.user_id = :user_id";
-    
-    $stmt = $this->conn->prepare($query);
-    $stmt->bindParam(":cart_id", $cart_id);
-    $stmt->bindParam(":user_id", $this->user_id);
-    $stmt->execute();
-    
-    if($stmt->rowCount() > 0) {
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(":cart_id", $cart_id);
+        $stmt->bindParam(":user_id", $this->user_id);
+        $stmt->execute();
+
+        if ($stmt->rowCount() > 0) {
+            return $stmt->fetch(PDO::FETCH_ASSOC);
+        }
+        return false;
     }
-    return false;
-}
 }
 ?>

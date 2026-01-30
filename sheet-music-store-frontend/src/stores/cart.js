@@ -101,14 +101,31 @@ export const useCartStore = defineStore("cart", () => {
     }
   };
 
-  const updateQuantity = (productId, quantity) => {
-    const item = cartItems.value.find((item) => item.id === productId);
-    if (item) {
-      item.quantity = quantity;
-      if (item.quantity <= 0) {
-        removeFromCart(productId);
-      } else {
-        saveCart();
+  const updateQuantity = async (cartId, isIncrease) => {
+    console.log("Increasing quantity for item ID:", cartId);
+    if (isIncrease) {
+      try {
+        await axios.put(`http://localhost:8000/api/cart/increase/${cartId}`, {
+          headers: {
+            Authorization: `Bearer ${authStore.token}`,
+            "Content-Type": "application/json",
+          },
+        });
+      } catch (error) {
+        console.error("Failed to update cart item quantity:", error);
+        throw error;
+      }
+    } else {
+      try {
+        await axios.put(`http://localhost:8000/api/cart/decrease/${cartId}`, {
+          headers: {
+            Authorization: `Bearer ${authStore.token}`,
+            "Content-Type": "application/json",
+          },
+        });
+      } catch (error) {
+        console.error("Failed to update cart item quantity:", error);
+        throw error;
       }
     }
   };

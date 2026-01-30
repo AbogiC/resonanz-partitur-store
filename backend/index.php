@@ -169,16 +169,37 @@ switch ($method) {
         switch ($uri_parts[0]) {
             case 'cart':
                 AuthMiddleware::authenticate();
+                $cart = new CartController();
+                $user_id = $_SESSION['user_id'] ?? 1;
                 if (isset($uri_parts[1])) {
-                    $cart = new CartController();
-                    $user_id = $_SESSION['user_id'] ?? 1;
-                    echo $cart->updateCartItem($user_id, $uri_parts[1], $data);
+                    switch ($uri_parts[1]) {
+                        case '':
+                            echo $cart->updateCartItem($user_id, $uri_parts[1], $data);
+                            break;
+                        case 'increase':
+                            if (isset($uri_parts[2])) {
+                                echo $cart->increaseQuantityCartItem($uri_parts[2]);
+                            } else {
+                                http_response_code(400);
+                                echo json_encode(["message" => "Missing cart_id for increase operation"]);
+                            }
+                            break;
+                        case 'decrease':
+                            if (isset($uri_parts[2])) {
+                                echo $cart->decreaseQuantityCartItem($uri_parts[2]);
+                            } else {
+                                http_response_code(400);
+                                echo json_encode(["message" => "Missing cart_id for decrease operation"]);
+                            }
+                            break;
+                        default:
+                            http_response_code(404);
+                            echo json_encode(["message" => "Cart endpoint not found"]);
+                    }
+                } else {
+                    http_response_code(404);
+                    echo json_encode(["message" => "Cart endpoint not found"]);
                 }
-                break;
-
-            default:
-                http_response_code(404);
-                echo json_encode(array("message" => "Endpoint not found."));
                 break;
         }
         break;
