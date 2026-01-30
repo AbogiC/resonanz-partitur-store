@@ -76,8 +76,6 @@ const cartStore = useCartStore();
 const cartItemDB = computed(() => cartStore.cartItemDB);
 const cartItemCount = computed(() => cartItemDB.value.item_count);
 
-console.log("Cart Sidebar Rendered " + JSON.stringify(cartItemDB.value));
-
 const isCartOpen = computed(() => cartStore.isCartOpen);
 const cartItems = computed(() => cartItemDB.value.items);
 const cartTotal = computed(() => cartItemDB.value.total);

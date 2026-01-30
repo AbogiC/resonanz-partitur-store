@@ -136,13 +136,18 @@ const props = defineProps({
   },
 });
 
+const cartStore = useCartStore();
+const cartItemDB = computed(() => cartStore.cartItemDB);
+const cartItems = computed(() => cartItemDB.value?.items || []);
+
 const emit = defineEmits(["quickView"]);
 
-const cartStore = useCartStore();
-
-// Computed properties
 const isInCart = computed(() => {
-  return cartStore.cartItems.some((item) => item.id === props.product.id);
+  if (!Array.isArray(cartItems.value) || cartItems.value.length === 0) {
+    return false;
+  }
+
+  return cartItems.value.some((item) => item.product_id === props.product.id);
 });
 
 const canAddToCart = computed(() => {
