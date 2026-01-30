@@ -14,9 +14,9 @@ export default defineConfig({
     proxy: {
       "/api": {
         // LOCAL
-        // target: "http://localhost:8000",
+        target: "http://localhost:8000",
         // PRODUCTION
-        target: "https://partitur.resonanz.id",
+        // target: "https://partitur.resonanz.id",
         changeOrigin: true,
       },
     },

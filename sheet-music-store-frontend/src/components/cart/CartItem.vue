@@ -108,16 +108,22 @@ const props = defineProps({
   },
 });
 
-const removeItem = () => {
+const removeItem = async () => {
   cartStore.removeFromCart(props.item.cart_id);
+  await cartStore.getCartItemCount();
+  await cartStore.getCartItems();
 };
 
-const decreaseQuantity = () => {
+const decreaseQuantity = async () => {
   cartStore.updateQuantity(props.item.cart_id, false);
+  await cartStore.getCartItemCount();
+  await cartStore.getCartItems();
 };
 
-const increaseQuantity = () => {
+const increaseQuantity = async () => {
   cartStore.updateQuantity(props.item.cart_id, true);
+  await cartStore.getCartItemCount();
+  await cartStore.getCartItems();
 };
 </script>
 

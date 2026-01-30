@@ -17,7 +17,7 @@ export const useCartStore = defineStore("cart", () => {
     await getCartItems();
   });
 
-  async function getCartItemCount() {
+  const getCartItemCount = async () => {
     try {
       const response = await axios.get("/api/cart/count", {
         headers: {
@@ -32,7 +32,7 @@ export const useCartStore = defineStore("cart", () => {
       cartItemCount.value = 0;
       totalQuantity.value = 0;
     }
-  }
+  };
 
   const getCartItems = async () => {
     if (!authStore.isAuthenticated) {
@@ -140,6 +140,7 @@ export const useCartStore = defineStore("cart", () => {
     cartItemCount,
     totalQuantity,
     getCartItems,
+    getCartItemCount,
     addToCart,
     removeFromCart,
     updateQuantity,

@@ -19,9 +19,9 @@ import "./assets/main.css";
 
 // Configure axios
 // LOCAL
-// axios.defaults.baseURL = "http://localhost:8000";
+axios.defaults.baseURL = "http://localhost:8000";
 // PRODUCTION
-axios.defaults.baseURL = "https://partitur.resonanz.id";
+// axios.defaults.baseURL = "https://partitur.resonanz.id";
 
 // Add request interceptor to include auth token
 axios.interceptors.request.use(

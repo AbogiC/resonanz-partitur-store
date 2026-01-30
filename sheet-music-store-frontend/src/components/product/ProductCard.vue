@@ -187,6 +187,7 @@ const addToCart = async () => {
     // Add to cart
     await cartStore.addToCart(props.product);
     await cartStore.getCartItems();
+    await cartStore.getCartItemCount();
   } catch (error) {
     console.error("Failed to add to cart:", error);
   }
