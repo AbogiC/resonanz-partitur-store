@@ -2,6 +2,7 @@
   <div
     v-if="isCartOpen"
     class="cart-sidebar position-fixed top-0 end-0 h-100 bg-white shadow-lg z-index-1050"
+    :class="{ show: isCartOpen }"
     style="width: 400px; z-index: 1050"
   >
     <div
@@ -17,10 +18,7 @@
       </button>
     </div>
 
-    <div
-      class="cart-body flex-grow-1 overflow-auto"
-      style="height: calc(100% - 140px)"
-    >
+    <div class="cart-body flex-grow-1 overflow-auto">
       <div v-if="cartItems.length === 0" class="text-center py-5">
         <i class="bi bi-cart fs-1 text-muted mb-3"></i>
         <p class="text-muted">Your cart is empty</p>

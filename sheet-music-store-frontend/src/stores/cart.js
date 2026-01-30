@@ -1,9 +1,13 @@
 import { defineStore } from "pinia";
 import { ref, computed } from "vue";
+import axios from "axios";
+import { useAuthStore } from "./auth";
+import router from "@/router";
 
 export const useCartStore = defineStore("cart", () => {
   const cartItems = ref(JSON.parse(localStorage.getItem("cart") || "[]"));
   const isCartOpen = ref(false);
+  const authStore = useAuthStore();
 
   const cartItemCount = computed(() => {
     return cartItems.value.reduce((total, item) => total + item.quantity, 0);
@@ -16,14 +20,60 @@ export const useCartStore = defineStore("cart", () => {
     );
   });
 
-  const addToCart = (product) => {
-    const existingItem = cartItems.value.find((item) => item.id === product.id);
-    if (existingItem) {
-      existingItem.quantity += 1;
+  const getCartItems = async () => {
+    if (!authStore.isAuthenticated) {
+      cartItems.value = [];
+      return;
     } else {
-      cartItems.value.push({ ...product, quantity: 1 });
+      try {
+        const response = await axios.get("http://localhost:8000/api/cart", {
+          headers: {
+            Authorization: `Bearer ${authStore.token}`,
+          },
+        });
+        cartItems.value = response.data;
+      } catch (error) {
+        console.error("Failed to fetch cart items:", error);
+        cartItems.value = [];
+      }
     }
-    saveCart();
+  };
+
+  const addToCart = async (product) => {
+    if (!authStore.isAuthenticated) {
+      router.push("/login");
+      return;
+    }
+
+    try {
+      await axios.post(
+        "http://localhost:8000/api/cart",
+        {
+          product_id: product.id,
+          quantity: 1,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${authStore.token}`,
+            "Content-Type": "application/json",
+          },
+        },
+      );
+
+      // Update local cart state
+      const existingItem = cartItems.value.find(
+        (item) => item.id === product.id,
+      );
+      if (existingItem) {
+        existingItem.quantity += 1;
+      } else {
+        cartItems.value.push({ ...product, quantity: 1 });
+      }
+      saveCart();
+    } catch (error) {
+      console.error("Failed to add to cart:", error);
+      throw error;
+    }
   };
 
   const removeFromCart = (productId) => {
@@ -61,6 +111,7 @@ export const useCartStore = defineStore("cart", () => {
     isCartOpen,
     cartItemCount,
     cartTotal,
+    getCartItems,
     addToCart,
     removeFromCart,
     updateQuantity,

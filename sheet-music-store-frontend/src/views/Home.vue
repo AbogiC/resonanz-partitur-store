@@ -248,6 +248,10 @@ import { useProductStore } from "@/stores/product";
 import CategoryCard from "@/components/shared/CategoryCard.vue";
 import ProductCard from "@/components/product/ProductCard.vue";
 
+defineOptions({
+  name: "HomePage",
+});
+
 const productStore = useProductStore();
 
 const loadingFeatured = ref(true);

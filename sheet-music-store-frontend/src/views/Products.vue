@@ -288,7 +288,7 @@
 
           <!-- Products Grid/List -->
           <div v-if="loading" class="row g-4">
-            <div v-for="n in 8" :key="n" class="col-md-6 col-lg-4 col-xl-3">
+            <div v-for="n in 8" :key="n" class="col-md-6 col-xl-6">
               <div class="product-card">
                 <div class="placeholder-glow">
                   <div
@@ -317,7 +317,7 @@
             <div
               v-for="product in paginatedProducts"
               :key="product.id"
-              class="col-md-6 col-lg-4 col-xl-3"
+              class="col-md-6 col-xl-6"
             >
               <ProductCard :product="product" />
             </div>
@@ -406,6 +406,10 @@ import { useProductStore } from "@/stores/product";
 import ProductCard from "@/components/product/ProductCard.vue";
 import ProductListItem from "@/components/product/ProductListItem.vue";
 import { Icon } from "@iconify/vue";
+
+defineOptions({
+  name: "ProductsPage",
+});
 
 const route = useRoute();
 const router = useRouter();
@@ -522,6 +526,8 @@ const totalProducts = computed(() => productStore.totalProducts);
 const productCounts = computed(() => productStore.productCountsByType);
 const categories = computed(() => productStore.categories);
 const categoryCounts = computed(() => productStore.categoryCounts);
+
+console.log("total all products: " + allProducts.value.length);
 
 // Filtered products
 const filteredProducts = computed(() => {

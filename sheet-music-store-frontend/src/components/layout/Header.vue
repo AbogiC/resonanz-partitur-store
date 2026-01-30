@@ -261,6 +261,10 @@ import { useRouter } from "vue-router";
 import { useCartStore } from "@/stores/cart";
 import { useAuthStore } from "@/stores/auth";
 
+defineOptions({
+  name: "HeaderContent",
+});
+
 const router = useRouter();
 const cartStore = useCartStore();
 const authStore = useAuthStore();
