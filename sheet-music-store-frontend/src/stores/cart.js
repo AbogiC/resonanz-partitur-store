@@ -19,7 +19,7 @@ export const useCartStore = defineStore("cart", () => {
 
   async function getCartItemCount() {
     try {
-      const response = await axios.get("http://localhost:8000/api/cart/count", {
+      const response = await axios.get("/api/cart/count", {
         headers: {
           Authorization: `Bearer ${authStore.token}`,
         },
@@ -40,7 +40,7 @@ export const useCartStore = defineStore("cart", () => {
       return;
     }
     try {
-      const response = await axios.get("http://localhost:8000/api/cart", {
+      const response = await axios.get("/api/cart", {
         headers: {
           Authorization: `Bearer ${authStore.token}`,
         },
@@ -60,7 +60,7 @@ export const useCartStore = defineStore("cart", () => {
 
     try {
       await axios.post(
-        "http://localhost:8000/api/cart",
+        "/api/cart",
         {
           product_id: product.id,
           quantity: 1,
@@ -72,16 +72,6 @@ export const useCartStore = defineStore("cart", () => {
           },
         },
       );
-
-      // Update local cart state
-      const existingItem = cartItems.value.find(
-        (item) => item.id === product.id,
-      );
-      if (existingItem) {
-        existingItem.quantity += 1;
-      } else {
-        cartItems.value.push({ ...product, quantity: 1 });
-      }
     } catch (error) {
       console.error("Failed to add to cart:", error);
       throw error;
@@ -90,7 +80,7 @@ export const useCartStore = defineStore("cart", () => {
 
   const removeFromCart = async (cartId) => {
     try {
-      await axios.delete(`http://localhost:8000/api/cart/${cartId}`, {
+      await axios.delete(`/api/cart/${cartId}`, {
         headers: {
           Authorization: `Bearer ${authStore.token}`,
         },
@@ -105,7 +95,7 @@ export const useCartStore = defineStore("cart", () => {
     console.log("Increasing quantity for item ID:", cartId);
     if (isIncrease) {
       try {
-        await axios.put(`http://localhost:8000/api/cart/increase/${cartId}`, {
+        await axios.put(`/api/cart/increase/${cartId}`, {
           headers: {
             Authorization: `Bearer ${authStore.token}`,
             "Content-Type": "application/json",
@@ -117,7 +107,7 @@ export const useCartStore = defineStore("cart", () => {
       }
     } else {
       try {
-        await axios.put(`http://localhost:8000/api/cart/decrease/${cartId}`, {
+        await axios.put(`/api/cart/decrease/${cartId}`, {
           headers: {
             Authorization: `Bearer ${authStore.token}`,
             "Content-Type": "application/json",

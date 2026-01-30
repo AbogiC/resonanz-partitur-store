@@ -276,10 +276,6 @@ const cartItemCount = computed(() => cartStore.totalQuantity);
 const isAuthenticated = computed(() => authStore.isAuthenticated);
 const user = computed(() => authStore.user);
 
-const toggleSearch = () => {
-  showSearch.value = !showSearch.value;
-};
-
 const toggleCart = () => {
   cartStore.toggleCart();
 };

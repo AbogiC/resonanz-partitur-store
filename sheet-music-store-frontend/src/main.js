@@ -18,7 +18,10 @@ import "vue3-toastify/dist/index.css";
 import "./assets/main.css";
 
 // Configure axios
-axios.defaults.baseURL = "http://localhost:8000";
+// LOCAL
+// axios.defaults.baseURL = "http://localhost:8000";
+// PRODUCTION
+axios.defaults.baseURL = "https://partitur.resonanz.id";
 
 // Add request interceptor to include auth token
 axios.interceptors.request.use(
