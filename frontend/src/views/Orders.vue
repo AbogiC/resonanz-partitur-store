@@ -25,9 +25,9 @@
                 </thead>
                 <tbody>
                   <tr v-for="order in orders" :key="order.id">
-                    <td>#{{ order.id }}</td>
-                    <td>{{ formatDate(order.date) }}</td>
-                    <td>Rp {{ formatCurrency(order.total) }}</td>
+                    <td>#{{ order.order_number }}</td>
+                    <td>{{ formatDate(order.created_at) }}</td>
+                    <td>{{ formatCurrency(order.total_amount) }}</td>
                     <td>
                       <span class="badge" :class="statusClass(order.status)">
                         {{ order.status }}
@@ -35,30 +35,38 @@
                     </td>
                     <td class="text-end">
                       <!-- Pending Actions -->
-                      <template v-if="order.status === 'Pending'">
-                        <button class="btn btn-sm btn-primary me-2" @click="continuePayment(order)">
-                          Continue Payment
-                        </button>
-                        <button class="btn btn-sm btn-outline-danger" @click="cancelOrder(order)">
-                          Cancel
-                        </button>
-                      </template>
+                      <div class="d-flex justify-center-end">
+                        <template v-if="order.status === 'pending'">
+                          <button
+                            class="btn btn-sm btn-primary me-2"
+                            @click="continuePayment(order)"
+                          >
+                            Continue Payment
+                          </button>
+                          <button
+                            class="btn btn-sm btn-outline-danger"
+                            @click="cancelOrder(order)"
+                          >
+                            Cancel
+                          </button>
+                        </template>
 
-                      <!-- Paid -->
-                      <span v-else-if="order.status === 'Paid'" class="text-success">
-                        ✔ Completed
-                      </span>
+                        <!-- Paid -->
+                        <span
+                          v-else-if="order.status === 'paid'"
+                          class="text-success"
+                        >
+                          ✔ Completed
+                        </span>
 
-                      <!-- Canceled -->
-                      <span v-else class="text-muted">
-                        — No action
-                      </span>
+                        <!-- Canceled -->
+                        <span v-else class="text-muted"> — No action </span>
+                      </div>
                     </td>
                   </tr>
                 </tbody>
               </table>
             </div>
-
           </div>
         </div>
       </div>
@@ -67,62 +75,62 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { onMounted, ref } from "vue";
+import axios from "axios";
 
 defineOptions({
-  name: 'OrdersView'
-})
+  name: "OrdersView",
+});
+
+onMounted(() => {
+  fetchOrders();
+});
 
 /**
  * Mock order data
  * Replace this with API result later
  */
-const orders = ref([
-  {
-    id: 1001,
-    date: '2026-01-20',
-    total: 250000,
-    status: 'Pending'
-  },
-  {
-    id: 1002,
-    date: '2026-01-18',
-    total: 180000,
-    status: 'Paid'
-  },
-  {
-    id: 1003,
-    date: '2026-01-15',
-    total: 320000,
-    status: 'Canceled'
-  }
-])
+const orders = ref([]);
+
+const fetchOrders = async () => {
+  const response = await axios.get("/api/orders", {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+      "Content-Type": "application/json",
+    },
+  });
+
+  orders.value = response.data.records;
+  console.log("Fetched orders:", orders.value);
+};
 
 /* Helpers */
 const formatCurrency = (value) =>
-  value.toLocaleString('id-ID')
+  new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+  }).format(value);
 
-const formatDate = (date) =>
-  new Date(date).toLocaleDateString('id-ID')
+const formatDate = (date) => new Date(date).toLocaleDateString("id-ID");
 
 const statusClass = (status) => {
   return {
-    'bg-warning text-dark': status === 'Pending',
-    'bg-success': status === 'Paid',
-    'bg-secondary': status === 'Canceled'
-  }
-}
+    "bg-warning text-dark": status === "pending",
+    "bg-success": status === "paid",
+    "bg-secondary": status === "cancelled",
+  };
+};
 
 /* Actions */
 const continuePayment = (order) => {
   // redirect to payment page
-  console.log('Continue payment for order:', order.id)
+  console.log("Continue payment for order:", order.id);
   // example:
   // router.push(`/payment/${order.id}`)
-}
+};
 
 const cancelOrder = (order) => {
-  if (!confirm(`Cancel order #${order.id}?`)) return
-  order.status = 'Canceled'
-}
+  if (!confirm(`Cancel order #${order.id}?`)) return;
+  order.status = "Canceled";
+};
 </script>
