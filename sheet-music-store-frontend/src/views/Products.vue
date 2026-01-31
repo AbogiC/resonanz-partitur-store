@@ -24,28 +24,14 @@
 
               <!-- View Toggle -->
               <div class="btn-group" role="group">
-                <input
-                  type="radio"
-                  class="btn-check"
-                  name="viewMode"
-                  id="gridView"
-                  autocomplete="off"
-                  :value="'grid'"
-                  v-model="viewMode"
-                />
+                <input type="radio" class="btn-check" name="viewMode" id="gridView" autocomplete="off" :value="'grid'"
+                  v-model="viewMode" />
                 <label class="btn btn-outline-secondary" for="gridView">
                   <Icon icon="mdi:view-grid" />
                 </label>
 
-                <input
-                  type="radio"
-                  class="btn-check"
-                  name="viewMode"
-                  id="listView"
-                  autocomplete="off"
-                  :value="'list'"
-                  v-model="viewMode"
-                />
+                <input type="radio" class="btn-check" name="viewMode" id="listView" autocomplete="off" :value="'list'"
+                  v-model="viewMode" />
                 <label class="btn btn-outline-secondary" for="listView">
                   <Icon icon="mdi:view-list" />
                 </label>
@@ -58,20 +44,12 @@
         <nav aria-label="breadcrumb" class="mt-3">
           <ol class="breadcrumb">
             <li class="breadcrumb-item">
-              <router-link to="/" class="text-decoration-none"
-                >Home</router-link
-              >
+              <router-link to="/" class="text-decoration-none">Home</router-link>
             </li>
             <li class="breadcrumb-item">
-              <router-link to="/products" class="text-decoration-none"
-                >Products</router-link
-              >
+              <router-link to="/products" class="text-decoration-none">Products</router-link>
             </li>
-            <li
-              v-if="activeFilter"
-              class="breadcrumb-item active"
-              aria-current="page"
-            >
+            <li v-if="activeFilter" class="breadcrumb-item active" aria-current="page">
               {{ activeFilter }}
             </li>
           </ol>
@@ -86,15 +64,10 @@
           <div class="card border-0 shadow-sm">
             <div class="card-body">
               <!-- Filter Header -->
-              <div
-                class="d-flex justify-content-between align-items-center mb-4"
-              >
+              <div class="d-flex justify-content-between align-items-center mb-4">
                 <h3 class="h5 mb-0">Filters</h3>
-                <button
-                  v-if="hasActiveFilters"
-                  @click="clearFilters"
-                  class="btn btn-link btn-sm text-decoration-none p-0"
-                >
+                <button v-if="hasActiveFilters" @click="clearFilters"
+                  class="btn btn-link btn-sm text-decoration-none p-0">
                   Clear All
                 </button>
               </div>
@@ -103,29 +76,15 @@
               <div class="mb-4">
                 <h4 class="h6 mb-3">Product Type</h4>
                 <div class="form-check mb-2">
-                  <input
-                    class="form-check-input"
-                    type="radio"
-                    v-model="filters.type"
-                    value=""
-                    id="typeAll"
-                  />
+                  <input class="form-check-input" type="radio" v-model="filters.type" value="" id="typeAll" />
                   <label class="form-check-label" for="typeAll">
                     All Products
                   </label>
                 </div>
                 <div class="form-check mb-2">
-                  <input
-                    class="form-check-input"
-                    type="radio"
-                    v-model="filters.type"
-                    value="sheet_music"
-                    id="typeSheetMusic"
-                  />
-                  <label
-                    class="form-check-label d-flex justify-content-between"
-                    for="typeSheetMusic"
-                  >
+                  <input class="form-check-input" type="radio" v-model="filters.type" value="sheet_music"
+                    id="typeSheetMusic" />
+                  <label class="form-check-label d-flex justify-content-between" for="typeSheetMusic">
                     <span>Sheet Music</span>
                     <span class="text-muted small">{{
                       productCounts.sheet_music
@@ -133,17 +92,9 @@
                   </label>
                 </div>
                 <div class="form-check">
-                  <input
-                    class="form-check-input"
-                    type="radio"
-                    v-model="filters.type"
-                    value="merchandise"
-                    id="typeMerchandise"
-                  />
-                  <label
-                    class="form-check-label d-flex justify-content-between"
-                    for="typeMerchandise"
-                  >
+                  <input class="form-check-input" type="radio" v-model="filters.type" value="merchandise"
+                    id="typeMerchandise" />
+                  <label class="form-check-label d-flex justify-content-between" for="typeMerchandise">
                     <span>Merchandise</span>
                     <span class="text-muted small">{{
                       productCounts.merchandise
@@ -156,22 +107,10 @@
               <div v-if="categories.length > 0" class="mb-4">
                 <h4 class="h6 mb-3">Category</h4>
                 <div class="form-scrollable">
-                  <div
-                    v-for="category in categories"
-                    :key="category"
-                    class="form-check mb-2"
-                  >
-                    <input
-                      class="form-check-input"
-                      type="checkbox"
-                      :value="category"
-                      v-model="filters.categories"
-                      :id="`category-${category}`"
-                    />
-                    <label
-                      class="form-check-label d-flex justify-content-between"
-                      :for="`category-${category}`"
-                    >
+                  <div v-for="category in categories" :key="category" class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" :value="category" v-model="filters.categories"
+                      :id="`category-${category}`" />
+                    <label class="form-check-label d-flex justify-content-between" :for="`category-${category}`">
                       <span class="text-capitalize">{{ category }}</span>
                       <span class="text-muted small">
                         {{ categoryCounts[category] || 0 }}
@@ -186,29 +125,18 @@
                 <h4 class="h6 mb-3">Price Range</h4>
                 <div class="row g-2 mb-3">
                   <div class="col">
-                    <input
-                      type="number"
-                      v-model="filters.minPrice"
-                      placeholder="Min"
-                      class="form-control form-control-sm"
-                    />
+                    <input type="number" v-model="filters.minPrice" placeholder="Min"
+                      class="form-control form-control-sm" />
                   </div>
                   <div class="col-auto align-self-center">
                     <span class="text-muted">to</span>
                   </div>
                   <div class="col">
-                    <input
-                      type="number"
-                      v-model="filters.maxPrice"
-                      placeholder="Max"
-                      class="form-control form-control-sm"
-                    />
+                    <input type="number" v-model="filters.maxPrice" placeholder="Max"
+                      class="form-control form-control-sm" />
                   </div>
                 </div>
-                <button
-                  @click="applyPriceRange"
-                  class="btn btn-primary btn-sm w-100"
-                >
+                <button @click="applyPriceRange" class="btn btn-primary btn-sm w-100">
                   Apply Price
                 </button>
               </div>
@@ -216,12 +144,7 @@
               <!-- Digital Only -->
               <div class="mb-3">
                 <div class="form-check">
-                  <input
-                    class="form-check-input"
-                    type="checkbox"
-                    v-model="filters.digitalOnly"
-                    id="digitalOnly"
-                  />
+                  <input class="form-check-input" type="checkbox" v-model="filters.digitalOnly" id="digitalOnly" />
                   <label class="form-check-label" for="digitalOnly">
                     Digital Only
                   </label>
@@ -231,12 +154,7 @@
               <!-- In Stock Only -->
               <div>
                 <div class="form-check">
-                  <input
-                    class="form-check-input"
-                    type="checkbox"
-                    v-model="filters.inStockOnly"
-                    id="inStockOnly"
-                  />
+                  <input class="form-check-input" type="checkbox" v-model="filters.inStockOnly" id="inStockOnly" />
                   <label class="form-check-label" for="inStockOnly">
                     In Stock Only
                   </label>
@@ -267,16 +185,11 @@
                 <!-- Active Filters -->
                 <div v-if="hasActiveFilters" class="col-md-6">
                   <div class="d-flex flex-wrap gap-2 justify-content-md-end">
-                    <span
-                      v-for="filter in activeFilterTags"
-                      :key="filter.key"
-                      class="badge bg-primary d-flex align-items-center gap-1"
-                    >
+                    <span v-for="filter in activeFilterTags" :key="filter.key"
+                      class="badge bg-primary d-flex align-items-center gap-1">
                       {{ filter.label }}
-                      <button
-                        @click="removeFilter(filter.key)"
-                        class="btn btn-link btn-sm p-0 text-white opacity-75 hover-opacity-100"
-                      >
+                      <button @click="removeFilter(filter.key)"
+                        class="btn btn-link btn-sm p-0 text-white opacity-75 hover-opacity-100">
                         <Icon icon="mdi:close" class="fs-6" />
                       </button>
                     </span>
@@ -291,10 +204,7 @@
             <div v-for="n in 8" :key="n" class="col-md-6 col-xl-6">
               <div class="product-card">
                 <div class="placeholder-glow">
-                  <div
-                    class="placeholder placeholder-lg bg-secondary"
-                    style="height: 200px"
-                  ></div>
+                  <div class="placeholder placeholder-lg bg-secondary" style="height: 200px"></div>
                   <div class="card-body">
                     <h5 class="card-title placeholder-glow">
                       <span class="placeholder col-8"></span>
@@ -310,39 +220,22 @@
             </div>
           </div>
 
-          <div
-            v-else-if="viewMode === 'grid' && filteredProducts.length > 0"
-            class="row g-4"
-          >
-            <div
-              v-for="product in paginatedProducts"
-              :key="product.id"
-              class="col-md-6 col-xl-6"
-            >
+          <div v-else-if="viewMode === 'grid' && filteredProducts.length > 0" class="row g-4">
+            <div v-for="product in paginatedProducts" :key="product.id" class="col-md-6 col-xl-6">
               <ProductCard :product="product" />
             </div>
           </div>
 
-          <div
-            v-else-if="viewMode === 'list' && filteredProducts.length > 0"
-            class="row"
-          >
+          <div v-else-if="viewMode === 'list' && filteredProducts.length > 0" class="row">
             <div class="col-12">
               <div class="list-group">
-                <ProductListItem
-                  v-for="product in paginatedProducts"
-                  :key="product.id"
-                  :product="product"
-                />
+                <ProductListItem v-for="product in paginatedProducts" :key="product.id" :product="product" />
               </div>
             </div>
           </div>
 
           <!-- No Results -->
-          <div
-            v-else-if="!loading && filteredProducts.length === 0"
-            class="text-center py-5"
-          >
+          <div v-else-if="!loading && filteredProducts.length === 0" class="text-center py-5">
             <div class="mb-4 text-muted">
               <Icon icon="mdi:music-off" style="font-size: 4rem" />
             </div>
@@ -359,35 +252,20 @@
           <nav v-if="totalPages > 1" aria-label="Page navigation" class="mt-4">
             <ul class="pagination justify-content-center">
               <li class="page-item" :class="{ disabled: currentPage === 1 }">
-                <button
-                  class="page-link"
-                  @click="handlePageChange(currentPage - 1)"
-                  :disabled="currentPage === 1"
-                >
+                <button class="page-link" @click="handlePageChange(currentPage - 1)" :disabled="currentPage === 1">
                   Previous
                 </button>
               </li>
 
-              <li
-                v-for="page in visiblePages"
-                :key="page"
-                class="page-item"
-                :class="{ active: page === currentPage }"
-              >
+              <li v-for="page in visiblePages" :key="page" class="page-item" :class="{ active: page === currentPage }">
                 <button class="page-link" @click="handlePageChange(page)">
                   {{ page }}
                 </button>
               </li>
 
-              <li
-                class="page-item"
-                :class="{ disabled: currentPage === totalPages }"
-              >
-                <button
-                  class="page-link"
-                  @click="handlePageChange(currentPage + 1)"
-                  :disabled="currentPage === totalPages"
-                >
+              <li class="page-item" :class="{ disabled: currentPage === totalPages }">
+                <button class="page-link" @click="handlePageChange(currentPage + 1)"
+                  :disabled="currentPage === totalPages">
                   Next
                 </button>
               </li>
