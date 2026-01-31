@@ -1,11 +1,6 @@
 <template>
   <!-- Checkout Confirmation Modal -->
-  <div
-    v-if="isOpen"
-    class="modal fade show d-block"
-    tabindex="-1"
-    style="z-index: 1060"
-  >
+  <div v-if="isOpen" class="modal fade show d-block" tabindex="-1" style="z-index: 1060">
     <div class="modal-dialog modal-dialog-centered modal-lg">
       <div class="modal-content">
         <div class="modal-header">
@@ -27,12 +22,8 @@
             <h6 class="mb-3">Order Summary</h6>
 
             <div class="mb-3">
-              <div
-                v-for="item in cartItems"
-                :key="item.id"
-                class="d-flex justify-content-between mb-2"
-              >
-                <span>{{ item.title }} (x{{ item.quantity }})</span>
+              <div v-for="item in cartItems" :key="item.id" class="d-flex justify-content-between mb-2">
+                <span>{{ item.name }} (x{{ item.quantity }})</span>
                 <span>${{ (item.price * item.quantity).toFixed(2) }}</span>
               </div>
             </div>
@@ -86,15 +77,8 @@
               </div>
             </div>
 
-            <div
-              v-if="!hasShippingAddress || !hasBillingAddress"
-              class="text-center mb-3"
-            >
-              <router-link
-                to="/profile"
-                class="btn btn-sm btn-outline-primary"
-                @click="close"
-              >
+            <div v-if="!hasShippingAddress || !hasBillingAddress" class="text-center mb-3">
+              <router-link to="/profile" class="btn btn-sm btn-outline-primary" @click="close">
                 Update Profile
               </router-link>
             </div>
@@ -108,13 +92,8 @@
         <div class="modal-footer">
           <button class="btn btn-secondary" @click="close">Cancel</button>
 
-          <button
-            class="btn btn-primary"
-            @click="confirm"
-            :disabled="
-              loadingProfile || !hasShippingAddress || !hasBillingAddress
-            "
-          >
+          <button class="btn btn-primary" @click="confirm" :disabled="loadingProfile || !hasShippingAddress || !hasBillingAddress
+            ">
             Confirm & Proceed
           </button>
         </div>
@@ -123,11 +102,7 @@
   </div>
 
   <!-- Backdrop -->
-  <div
-    v-if="isOpen"
-    class="modal-backdrop fade show"
-    style="z-index: 1055"
-  ></div>
+  <div v-if="isOpen" class="modal-backdrop fade show" style="z-index: 1055"></div>
 </template>
 
 <script setup>

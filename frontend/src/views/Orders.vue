@@ -35,27 +35,18 @@
                     </td>
                     <td class="text-end">
                       <!-- Pending Actions -->
-                      <div class="d-flex justify-center-end">
+                      <div class="d-flex justify-content-end">
                         <template v-if="order.status === 'pending'">
-                          <button
-                            class="btn btn-sm btn-primary me-2"
-                            @click="continuePayment(order)"
-                          >
+                          <button class="btn btn-sm btn-primary me-2" @click="continuePayment(order.id)">
                             Continue Payment
                           </button>
-                          <button
-                            class="btn btn-sm btn-outline-danger"
-                            @click="cancelOrder(order)"
-                          >
+                          <button class="btn btn-sm btn-outline-danger" @click="cancelOrder(order)">
                             Cancel
                           </button>
                         </template>
 
                         <!-- Paid -->
-                        <span
-                          v-else-if="order.status === 'paid'"
-                          class="text-success"
-                        >
+                        <span v-else-if="order.status === 'paid'" class="text-success">
                           ✔ Completed
                         </span>
 
@@ -72,11 +63,20 @@
       </div>
     </div>
   </div>
+
+  <CheckoutModal :is-open="isCheckoutModalOpen" :loading-profile="loadingProfile" :cart-items="cartItems"
+    :cart-total="cartTotal" :user-profile="userProfile" :has-shipping-address="hasShippingAddress"
+    :has-billing-address="hasBillingAddress" :format-address="formatAddress" @close="closeCheckoutModal"
+    @confirm="confirmCheckout" />
 </template>
 
 <script setup>
-import { onMounted, ref } from "vue";
+import { onMounted, ref, computed } from "vue";
 import axios from "axios";
+import CheckoutModal from "@/components/shared/CheckoutModal.vue";
+import { useAuthStore } from "@/stores/auth";
+import { getUserProfile } from "@/services/api.js";
+import { useOrderStore } from "@/stores/order";
 
 defineOptions({
   name: "OrdersView",
@@ -91,6 +91,98 @@ onMounted(() => {
  * Replace this with API result later
  */
 const orders = ref([]);
+const isCheckoutModalOpen = ref(false);
+const loadingProfile = ref(false);
+const userProfile = ref({
+  billing_address: {
+    street: "",
+    city: "",
+    state: "",
+    postal_code: "",
+    country: "",
+    phone: "",
+  },
+  shipping_address: {
+    street: "",
+    city: "",
+    state: "",
+    postal_code: "",
+    country: "",
+    phone: "",
+  },
+});
+
+const authStore = useAuthStore();
+const orderStore = useOrderStore();
+
+const orderStoreData = computed(() => orderStore.orderItems);
+const cartItems = computed(() => orderStoreData.value.items);
+const cartTotal = computed(() => orderStoreData.value.total_amount);
+
+const hasShippingAddress = computed(() => {
+  const addr = userProfile.value.shipping_address;
+  return (
+    addr &&
+    (addr.street || addr.city || addr.state || addr.postal_code || addr.country)
+  );
+});
+
+const hasBillingAddress = computed(() => {
+  const addr = userProfile.value.billing_address;
+  return (
+    addr &&
+    (addr.street || addr.city || addr.state || addr.postal_code || addr.country)
+  );
+});
+
+const formatAddress = (address) => {
+  if (!address) return "No address provided";
+
+  const parts = [];
+  if (address.street) parts.push(address.street);
+  if (address.city) parts.push(address.city);
+  if (address.state) parts.push(address.state);
+  if (address.postal_code) parts.push(address.postal_code);
+  if (address.country) parts.push(address.country);
+
+  return parts.length > 0 ? parts.join(", ") : "No address provided";
+};
+
+const loadUserProfile = async () => {
+  loadingProfile.value = true;
+  try {
+    const profile = await getUserProfile();
+    userProfile.value = profile;
+  } catch (error) {
+    console.error("Error loading user profile:", error);
+    // If API fails, try to get from auth store
+    if (authStore.user) {
+      userProfile.value = {
+        billing_address:
+          authStore.user.billing_address || userProfile.value.billing_address,
+        shipping_address:
+          authStore.user.shipping_address || userProfile.value.shipping_address,
+      };
+    }
+  } finally {
+    loadingProfile.value = false;
+  }
+};
+
+const showCheckoutModal = async (orderId) => {
+  isCheckoutModalOpen.value = true;
+  await loadUserProfile();
+  await orderStore.getOrderItems(orderId);
+};
+
+const closeCheckoutModal = () => {
+  isCheckoutModalOpen.value = false;
+};
+
+const confirmCheckout = () => {
+  // Close the modal
+  closeCheckoutModal();
+};
 
 const fetchOrders = async () => {
   const response = await axios.get("/api/orders", {
@@ -122,9 +214,9 @@ const statusClass = (status) => {
 };
 
 /* Actions */
-const continuePayment = (order) => {
+const continuePayment = (orderId) => {
   // redirect to payment page
-  console.log("Continue payment for order:", order.id);
+  showCheckoutModal(orderId);
   // example:
   // router.push(`/payment/${order.id}`)
 };
