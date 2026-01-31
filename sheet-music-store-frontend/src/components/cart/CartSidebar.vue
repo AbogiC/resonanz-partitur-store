@@ -1,27 +1,14 @@
 <template>
-  <div
-    v-if="isCartOpen"
-    class="cart-sidebar position-fixed top-0 end-0 h-100 bg-white shadow-lg z-index-1050"
-    :class="{ show: isCartOpen }"
-    style="width: 400px; z-index: 1050"
-  >
-    <div
-      class="cart-header d-flex justify-content-between align-items-center p-3 border-bottom"
-    >
+  <div v-if="isCartOpen" class="cart-sidebar position-fixed top-0 end-0 h-100 bg-white shadow-lg z-index-1050"
+    :class="{ show: isCartOpen }" style="width: 400px; z-index: 1050">
+    <div class="cart-header d-flex justify-content-between align-items-center p-3 border-bottom">
       <h5 class="mb-0">Shopping Cart</h5>
-      <button
-        @click="toggleCart"
-        class="btn btn-link text-dark p-0"
-        type="button"
-      >
+      <button @click="toggleCart" class="btn btn-link text-dark p-0" type="button">
         <i class="bi bi-x-lg fs-4"></i>
       </button>
     </div>
 
-    <div
-      class="cart-body flex-grow-1 overflow-auto"
-      style="height: calc(100% - 250px)"
-    >
+    <div class="cart-body flex-grow-1 overflow-auto" style="height: calc(100% - 250px)">
       <div v-if="cartItemCount === 0" class="text-center py-5">
         <i class="bi bi-cart fs-1 text-muted mb-3"></i>
         <p class="text-muted">Your cart is empty</p>
@@ -31,13 +18,8 @@
       </div>
 
       <div v-else>
-        <CartItem
-          v-for="item in cartItems"
-          :key="item.id"
-          :item="item"
-          @update-quantity="(id, qty) => updateQuantity(id, qty)"
-          @remove="(id) => removeFromCart(id)"
-        />
+        <CartItem v-for="item in cartItems" :key="item.id" :item="item"
+          @update-quantity="(id, qty) => updateQuantity(id, qty)" @remove="(id) => removeFromCart(id)" />
       </div>
     </div>
 
@@ -56,21 +38,17 @@
   </div>
 
   <!-- Overlay -->
-  <div
-    v-if="isCartOpen"
-    class="cart-overlay position-fixed top-0 start-0 w-100 h-100 bg-dark bg-opacity-50"
-    style="z-index: 1040"
-    @click="toggleCart"
-  ></div>
+  <div v-if="isCartOpen" class="cart-overlay position-fixed top-0 start-0 w-100 h-100 bg-dark bg-opacity-50"
+    style="z-index: 1040" @click="toggleCart"></div>
 </template>
 
 <script setup>
 import { computed } from "vue";
-import { useRouter } from "vue-router";
 import { useCartStore } from "@/stores/cart";
 import CartItem from "./CartItem.vue";
 
-const router = useRouter();
+import { processInputOrder } from "@/services/api.js";
+
 const cartStore = useCartStore();
 
 const cartItemDB = computed(() => cartStore.cartItemDB);
@@ -98,8 +76,12 @@ const clearCart = () => {
 
 const checkout = () => {
   // TODO: Implement checkout logic
-  toggleCart();
-  router.push("/checkout");
+  const customerDetails = {
+    "shipping_address": "123 Main Street, Apt 4B, New York, NY 10001, USA",
+    "billing_address": "456 Oak Avenue, Suite 200, Los Angeles, CA 90001, USA",
+    "payment_method": "stripe",
+  };
+  processInputOrder(customerDetails);
 };
 </script>
 

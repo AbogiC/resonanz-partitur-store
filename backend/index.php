@@ -21,6 +21,7 @@ require_once 'controllers/ProductController.php';
 require_once 'controllers/CartController.php';
 require_once 'controllers/OrderController.php';
 require_once 'controllers/PaymentController.php';
+require_once 'controllers/ProfileController.php';
 
 // Get request method and URI
 $method = $_SERVER['REQUEST_METHOD'];
@@ -158,6 +159,13 @@ switch ($method) {
                 echo $cart->checkCartStock($user_id);
                 break;
 
+            case 'profile':
+                AuthMiddleware::authenticate();
+                $profile = new ProfileController();
+                $user_id = $_SESSION['user_id'] ?? 1;
+                echo $profile->getProfile($user_id);
+                break;
+
             default:
                 http_response_code(404);
                 echo json_encode(array("message" => "Endpoint not found."));
@@ -200,6 +208,18 @@ switch ($method) {
                     http_response_code(404);
                     echo json_encode(["message" => "Cart endpoint not found"]);
                 }
+                break;
+
+            case 'profile':
+                AuthMiddleware::authenticate();
+                $profile = new ProfileController();
+                $user_id = $_SESSION['user_id'] ?? 1;
+                echo $profile->updateProfile($user_id, $data);
+                break;
+
+            default:
+                http_response_code(404);
+                echo json_encode(array("message" => "Endpoint not found."));
                 break;
         }
         break;
